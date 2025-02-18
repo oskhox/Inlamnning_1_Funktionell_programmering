@@ -35,9 +35,9 @@ public class TestDatabase {
                 List.of("Paulo Cèsar Perèio", "Edna de Cèssia", "Lècio Dos Santos", "Elma Martins"), 7.0, List.of("Portuguese"), 90);
         testMovies.add(m6);
 
-        //Sjunde filmen
-        Movie m7 = new Movie("573a139bf29313caabcf43e5", "Pastorali", 1975, List.of("Drama"), List.of("Otar Iosseliani"),
-                List.of("Nana Ioseliani", "Tamar Gabarashvili", "Mikhail Naneishvili", "Nukri Davitashvili"), 7.3, List.of("Georgian"), 95);
+        //Sjunde filmen - GÖR OM
+        Movie m7 = new Movie("573a1397f29313caabce5d34", "The Rocky Horror Picture Show", 1975, List.of("Comedy", "Musical"), List.of("Jim Sharman"),
+                List.of("Tim Curry", "Susan Sarandon", "Barry Bostwick", "Jon Voight"), 7.4, List.of("English"), 100);
         testMovies.add(m7);
 
         //Åttonde filmen

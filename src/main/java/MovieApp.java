@@ -2,6 +2,7 @@ import com.mongodb.client.*;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,6 +23,13 @@ public class MovieApp {
                 }
             }
 
+            /*
+            for (Movie movie : movieList) {
+                System.out.println(movie);
+            }
+             */
+
+
             //Funktionsanrop
             long amount = allMovies(movieList);
             System.out.println("År 1975 gjordes " + amount + " filmer.");
@@ -37,7 +45,12 @@ public class MovieApp {
             System.out.print(String.join(", ", highestRatedCastList));
             System.out.println(".");
 
-            System.out.println("Filmen med lägst antal skådespelare är: " + movieFewestActors(movieList) + ".");
+            System.out.println("Filmen med lägst antal skådespelare är " + movieFewestActors(movieList) + ".");
+
+            System.out.println("Antal skådespelare som är med i flera filmer är " + actorsMultipleMovies(movieList)
+            + " stycken.");
+
+            System.out.println(actorMostMovies(movieList) + " var med i flest filmer.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,6 +96,37 @@ public class MovieApp {
                 .min(Comparator.comparingInt(a -> a.getCast().size()))
                 //Mappa om till titel, plocka ut titel med orElse istället för get
                 .map(Movie::getTitle).orElse(null);
+    }
+
+    public long actorsMultipleMovies(List<Movie> l){
+        //Alla skådespelare i en lång String-lista
+        List<String> allActors = l.stream()
+                .flatMap(a -> a.getCast()
+                .stream()).toList();
+
+        //Filtrera hur många gånger b förekommer i listan, räkna antal unika skådespelare
+        return allActors.stream()
+                .filter(b -> Collections.frequency(allActors, b) > 1)
+                .distinct()
+                .count();
+    }
+
+    public String actorMostMovies(List<Movie> l) {
+        //Alla skådespelare i en lång String-lista
+        List<String> allActors = l.stream()
+                .flatMap(a -> a.getCast()
+                .stream()).toList();
+
+        //Filtrera hur många gånger b förekommer i listan, hitta maxvärdet för förekomster
+        int mostMovies = allActors.stream()
+                .mapToInt(b -> Collections.frequency(allActors, b))
+                .summaryStatistics()
+                .getMax();
+
+        //Hitta den/de skådespelare som har det maximala antalet förekomster
+        return allActors.stream()
+                .filter(c -> Collections.frequency(allActors, c) == mostMovies)
+                .findAny().orElse(null);
     }
 
 }
