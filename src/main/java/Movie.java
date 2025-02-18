@@ -8,19 +8,19 @@ public class Movie {
     private final int year;
     private final int runtime;
     private final List<String> genres;
-    private final String director;
+    private final List<String> directors;
     private final List<String> cast;
     private final double imdbRating;
     private final List<String> languages;
 
     // Constructor
-    public Movie(String id, String title, int year, List<String> genres, String director, List<String> cast, double imdbRating, List<String> languages, int runtime) {
+    public Movie(String id, String title, int year, List<String> genres, List<String> directors, List<String> cast, double imdbRating, List<String> languages, int runtime) {
         this.id = id;
         this.title = title;
         this.year = year;
         this.runtime = runtime;
         this.genres = genres;
-        this.director = director;
+        this.directors = directors;
         this.cast = cast;
         this.imdbRating = imdbRating;
         this.languages = languages;
@@ -33,7 +33,7 @@ public class Movie {
                 doc.getString("title"),
                 doc.getInteger("year", 0),
                 doc.getList("genres", String.class),
-                doc.getString("director"),
+                doc.getList("directors", String.class),
                 doc.getList("cast", String.class),
                 doc.get("imdb", Document.class) != null ? doc.get("imdb", Document.class).getDouble("rating") : 0.0,
                 doc.getList("languages", String.class),
@@ -47,7 +47,7 @@ public class Movie {
     public int getYear() { return year; }
     public int getRuntime() { return runtime; }
     public List<String> getGenres() { return genres; }
-    public String getDirector() { return director; }
+    public List<String> getDirectors() { return directors; }
     public List<String> getCast() { return cast; }
     public double getImdbRating() { return imdbRating; }
     public List<String> getLanguages() { return languages; }
@@ -60,7 +60,7 @@ public class Movie {
                 ", year=" + year +
                 ", runtime=" + runtime +
                 ", genres=" + genres +
-                ", director='" + director + '\'' +
+                ", director='" + directors + '\'' +
                 ", cast=" + cast +
                 ", imdbRating=" + imdbRating +
                 ", languages=" + languages +
