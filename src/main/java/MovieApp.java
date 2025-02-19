@@ -23,34 +23,28 @@ public class MovieApp {
                 }
             }
 
-            /*
-            for (Movie movie : movieList) {
-                System.out.println(movie);
-            }
-             */
-
-
             //Funktionsanrop
-            long amount = allMovies(movieList);
-            System.out.println("År 1975 gjordes " + amount + " filmer.");
+            System.out.println("År 1975 gjordes " + allMovies(movieList) + " filmer.");
 
-            int longestRuntime = longestMovie(movieList);
-            System.out.println("Den längsta filmen är " + longestRuntime + " minuter lång.");
+            System.out.println("Den längsta filmen är " + longestMovie(movieList) + " minuter lång.");
 
-            long uniqueGenresLong = uniqueGenres(movieList);
-            System.out.println("Antal unika genrer är " + uniqueGenresLong + " stycken.");
+            System.out.println("Antal unika genrer är " + uniqueGenres(movieList) + " stycken.");
 
-            List<String> highestRatedCastList = highestRankedCast(movieList);
             System.out.print("Skådespelare från filmer med högst rating: ");
-            System.out.print(String.join(", ", highestRatedCastList));
+            System.out.print(String.join(", ", highestRankedCast(movieList)));
             System.out.println(".");
 
             System.out.println("Filmen med lägst antal skådespelare är " + movieFewestActors(movieList) + ".");
 
-            System.out.println("Antal skådespelare som är med i flera filmer är " + actorsMultipleMovies(movieList)
-            + " stycken.");
+            System.out.println("Antal skådespelare som är med i flera filmer är " + actorsMultipleMovies(movieList) + " stycken.");
 
             System.out.println(actorMostMovies(movieList) + " var med i flest filmer.");
+
+            System.out.println("Antal unika språk är " + uniqueLanguages(movieList) + " stycken.");
+
+            if (sameTitle(movieList))
+                System.out.println("Det finns flera filmer med samma titel.");
+            else System.out.println("Inga filmer delar titel.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,71 +56,76 @@ public class MovieApp {
     }
 
     public long allMovies(List<Movie> l) {
-        long numberOfMovies;
-        numberOfMovies = l.stream().count();
-        return numberOfMovies;
+        return l.stream().count();
     }
 
     public int longestMovie(List<Movie> l) {
-        return l.stream().mapToInt(Movie::getRuntime).summaryStatistics().getMax();
+        return l.stream().mapToInt(Movie::getRuntime)
+                .summaryStatistics().getMax();
     }
 
     public long uniqueGenres(List<Movie> l) {
-        long numberOfGenres;
-        numberOfGenres = l.stream().flatMap(a -> a.getGenres().stream()).distinct().count();
-        return numberOfGenres;
+        return l.stream()
+                .flatMap(a -> a.getGenres().stream())
+                .distinct()
+                .count();
     }
 
     public List<String> highestRankedCast(List<Movie> l) {
-        List<String> highestRatedCast;
-        highestRatedCast = l.stream()
-                //mappar filmer med maxrating och filtrerar sedan ut desa
-                .filter(a -> a.getImdbRating() == l.stream().mapToDouble(Movie::getImdbRating).max().getAsDouble())
-                //plattar ut listorna på skådespelare med högst rating
+        return l.stream()
+                //Mappar filmer med maxrating, filtrerar
+                .filter(a -> a.getImdbRating() == l.stream().mapToDouble(Movie::getImdbRating).max().orElseThrow())
                 .flatMap(b -> b.getCast().stream())
-                //gör en sorterad lista av strömmen
                 .sorted().toList();
-        //Returnera listan
-        return highestRatedCast;
     }
 
     public String movieFewestActors(List<Movie> l) {
         return l.stream()
                 //Film med lägst antal cast med comparator
                 .min(Comparator.comparingInt(a -> a.getCast().size()))
-                //Mappa om till titel, plocka ut titel med orElse istället för get
-                .map(Movie::getTitle).orElse(null);
+                .map(Movie::getTitle).orElseThrow();
     }
 
-    public long actorsMultipleMovies(List<Movie> l){
-        //Alla skådespelare i en lång String-lista
+    public long actorsMultipleMovies(List<Movie> l) {
         List<String> allActors = l.stream()
                 .flatMap(a -> a.getCast()
                 .stream()).toList();
 
-        //Filtrera hur många gånger b förekommer i listan, räkna antal unika skådespelare
         return allActors.stream()
-                .filter(b -> Collections.frequency(allActors, b) > 1)
+                .filter(a -> Collections.frequency(allActors, a) > 1)
                 .distinct()
                 .count();
     }
 
     public String actorMostMovies(List<Movie> l) {
-        //Alla skådespelare i en lång String-lista
         List<String> allActors = l.stream()
-                .flatMap(a -> a.getCast()
-                .stream()).toList();
+                .flatMap(a -> a.getCast().stream())
+                .toList();
 
-        //Filtrera hur många gånger b förekommer i listan, hitta maxvärdet för förekomster
+        //Vilken skådespelare i flest filmer
         int mostMovies = allActors.stream()
                 .mapToInt(b -> Collections.frequency(allActors, b))
-                .summaryStatistics()
-                .getMax();
+                .summaryStatistics().getMax();
 
-        //Hitta den/de skådespelare som har det maximala antalet förekomster
+        //Vad skådespelaren heter
         return allActors.stream()
                 .filter(c -> Collections.frequency(allActors, c) == mostMovies)
-                .findAny().orElse(null);
+                .findAny().orElseThrow();
     }
 
+    public long uniqueLanguages(List<Movie> l) {
+        return l.stream()
+                .flatMap(a -> a.getLanguages().stream())
+                .distinct()
+                .count();
+    }
+
+    public boolean sameTitle(List<Movie> l) {
+        List<String> allTitles = l.stream()
+                .map(Movie::getTitle)
+                .toList();
+
+        return allTitles.stream()
+                .anyMatch(a -> Collections.frequency(allTitles, a) > 1);
+    }
 }
