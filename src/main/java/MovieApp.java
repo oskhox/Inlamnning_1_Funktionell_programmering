@@ -9,14 +9,14 @@ import java.util.List;
 public class MovieApp {
     public MovieApp() {
 
-        String uri = "mongodb+srv://osk_testuser:CnP0c6K5agpZzFve@functionalprogramming.qfawe.mongodb.net/?retryWrites=true&w=majority&appName=functionalProgramming";
+        final String uri = "mongodb+srv://osk_testuser:CnP0c6K5agpZzFve@functionalprogramming.qfawe.mongodb.net/?retryWrites=true&w=majority&appName=functionalProgramming";
 
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase database = mongoClient.getDatabase("sample_mflix");
             MongoCollection<Document> moviesCollection = database.getCollection("movies");
 
             //Alla filmer från 1975
-            List<Movie> movieList = new ArrayList<>();
+            final List<Movie> movieList = new ArrayList<>();
             for (Document doc : moviesCollection.find(new Document("year", 1975))) {
                 {
                     movieList.add(Movie.fromDocument(doc));
