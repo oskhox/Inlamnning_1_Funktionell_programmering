@@ -22,7 +22,7 @@ public class MovieFunctions {
 
     public List<String> highestRankedCast(List<Movie> l) {
         return l.stream()
-                //Mappar filmer med maxrating, filtrerar
+                //Mappar film med maxrating, filtrera, flatmap, sortera
                 .filter(a -> a.getImdbRating() == l.stream().mapToDouble(Movie::getImdbRating).max().orElseThrow())
                 .flatMap(b -> b.getCast().stream())
                 .sorted().toList();
@@ -37,8 +37,8 @@ public class MovieFunctions {
 
     public long actorsMultipleMovies(List<Movie> l) {
         final List<String> allActors = l.stream()
-                .flatMap(a -> a.getCast()
-                        .stream()).toList();
+                .flatMap(a -> a.getCast().stream())
+                .toList();
 
         return allActors.stream()
                 .filter(a -> Collections.frequency(allActors, a) > 1)
