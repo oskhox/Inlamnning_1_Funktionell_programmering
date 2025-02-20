@@ -22,7 +22,7 @@ public class MovieFunctions {
 
     public List<String> highestRankedCast(List<Movie> l) {
         return l.stream()
-                //Mappar film med maxrating, filtrera, flatmap, sortera
+                //Mappar film med maxrating, filtrera efter maxvärde, flatmap, sortera
                 .filter(a -> a.getImdbRating() == l.stream().mapToDouble(Movie::getImdbRating).max().orElseThrow())
                 .flatMap(b -> b.getCast().stream())
                 .sorted().toList();
