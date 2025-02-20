@@ -1,16 +1,13 @@
 import org.junit.Test;
-
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MovieAppTest {
 
-    public TestMovieDB tdb = new TestMovieDB();
-    List<Movie> testMovies = tdb.getTestMovies();
-
-    MovieApp app = new MovieApp();
+    final public TestMovieDB tdb = new TestMovieDB();
+    final List<Movie> testMovies = tdb.getTestMovies();
+    final MovieApp app = new MovieApp();
 
     @Test
     public void numberOfMoviesTest() {
@@ -29,7 +26,7 @@ public class MovieAppTest {
 
     @Test
     public void highestRankedCastTest() {
-        List<String> expected = List.of("Gary Roberts", "Nikolas Simmonds", "Pamela Brighton", "Paul Copley");
+        final List<String> expected = List.of("Gary Roberts", "Nikolas Simmonds", "Pamela Brighton", "Paul Copley");
         assertEquals(expected, app.highestRankedCast(testMovies));
     }
 
@@ -56,5 +53,11 @@ public class MovieAppTest {
     @Test
     public void sameTitleTest() {
         assertTrue(app.sameTitle(testMovies));
+    }
+
+    @Test
+    public void HOFtest(){
+    LongestMovieInterface longestM = (m) -> m.getRuntime();
+    assertEquals(200, app.longestMovieHOF(testMovies, longestM));
     }
 }

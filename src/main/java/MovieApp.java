@@ -9,7 +9,7 @@ import java.util.List;
 public class MovieApp {
     public MovieApp() {
 
-        final String uri = "mongodb+srv://osk_testuser:CnP0c6K5agpZzFve@functionalprogramming.qfawe.mongodb.net/?retryWrites=true&w=majority&appName=functionalProgramming";
+        String uri = "mongodb+srv://osk_testuser:CnP0c6K5agpZzFve@functionalprogramming.qfawe.mongodb.net/?retryWrites=true&w=majority&appName=functionalProgramming";
 
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase database = mongoClient.getDatabase("sample_mflix");
@@ -42,9 +42,14 @@ public class MovieApp {
 
             System.out.println("Antal unika språk är " + uniqueLanguages(movieList) + " stycken.");
 
-            if (sameTitle(movieList))
-                System.out.println("Det finns flera filmer med samma titel.");
+            if (sameTitle(movieList)) System.out.println("Det finns flera filmer med samma titel.");
             else System.out.println("Inga filmer delar titel.");
+
+            //HOF: Implementation av interfacet (1)
+            LongestMovieInterface longestM = (m) -> m.getRuntime();
+
+            //HOF: Anrop HOF (3)
+            System.out.println("HOF: Längsta filmen är " + longestMovieHOF(movieList, longestM) + " minuter lång.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +65,7 @@ public class MovieApp {
     }
 
     public int longestMovie(List<Movie> l) {
-        return l.stream().mapToInt(Movie::getRuntime)
+        return l.stream().mapToInt(a -> a.getRuntime())
                 .summaryStatistics().getMax();
     }
 
@@ -87,9 +92,9 @@ public class MovieApp {
     }
 
     public long actorsMultipleMovies(List<Movie> l) {
-        List<String> allActors = l.stream()
+        final List<String> allActors = l.stream()
                 .flatMap(a -> a.getCast()
-                .stream()).toList();
+                        .stream()).toList();
 
         return allActors.stream()
                 .filter(a -> Collections.frequency(allActors, a) > 1)
@@ -98,12 +103,12 @@ public class MovieApp {
     }
 
     public String actorMostMovies(List<Movie> l) {
-        List<String> allActors = l.stream()
+        final List<String> allActors = l.stream()
                 .flatMap(a -> a.getCast().stream())
                 .toList();
 
         //Vilken skådespelare i flest filmer
-        int mostMovies = allActors.stream()
+        final int mostMovies = allActors.stream()
                 .mapToInt(b -> Collections.frequency(allActors, b))
                 .summaryStatistics().getMax();
 
@@ -121,11 +126,16 @@ public class MovieApp {
     }
 
     public boolean sameTitle(List<Movie> l) {
-        List<String> allTitles = l.stream()
+        final List<String> allTitles = l.stream()
                 .map(Movie::getTitle)
                 .toList();
 
         return allTitles.stream()
                 .anyMatch(a -> Collections.frequency(allTitles, a) > 1);
+    }
+
+    //HOF med interfacet som inparameter (2)
+    public int longestMovieHOF(List<Movie> l, LongestMovieInterface lmi) {
+        return l.stream().mapToInt(a -> lmi.movieLength(a)).summaryStatistics().getMax();
     }
 }
