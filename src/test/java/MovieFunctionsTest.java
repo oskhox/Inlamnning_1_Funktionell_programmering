@@ -3,7 +3,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class MovieAppTest {
+public class MovieFunctionsTest {
 
     final public TestMovieDB tdb = new TestMovieDB();
     final List<Movie> testMovies = tdb.getTestMovies();
